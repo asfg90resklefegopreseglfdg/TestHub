@@ -7,8 +7,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
-use Mockery\Exception;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class User extends Authenticatable
 {
@@ -135,13 +133,12 @@ class User extends Authenticatable
         return $this->email;
     }
 
-    /**
-     * @param $email
-     */
-    public function updateEmail($email): void
+
+    public function updateEmail($email): bool
     {
         $this->email = $email;
         $this->saveOrFail();
+        return true;
     }
 
     /**

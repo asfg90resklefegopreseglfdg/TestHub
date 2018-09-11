@@ -27,7 +27,6 @@
                 @click="createStatisticalData">
             Начать тест
         </button>
-
     </div>
 </template>
 
@@ -54,7 +53,6 @@
                     .then(function (response) {
                         if (response.status === 200) {
                             let identifier;
-                            console.log(response.data)
                             if (response.data['identifier']) {
                                 identifier = response.data['identifier'];
                             } else {

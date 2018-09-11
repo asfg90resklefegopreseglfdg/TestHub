@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Question;
 use App\Repositories\Eloquent\StatisticsRepository;
 use App\Repositories\Eloquent\TestRepository;
-use App\Repositories\Eloquent\UserRepository;
 use App\Statistics;
 use App\Test;
 use App\User;
@@ -104,7 +102,7 @@ class StatisticalController extends Controller
             $test = $testRepository->getTestById($value);
             abort_if($user->cant('showStatisticsListInTest', [Statistics::class, $test]), 403);
         }
-        $statistics = $statisticsRepository->getStatistics($test->id);
+        $statistics = $statisticsRepository->getStatistics($test->getId());
         return view('statistics.showStatisticsList', [
             'test' => $test,
             'statistics' => $statistics,

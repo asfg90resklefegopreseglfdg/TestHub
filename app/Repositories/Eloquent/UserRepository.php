@@ -28,4 +28,9 @@ class UserRepository
     {
         return User::where('unique_id', $uniqueId)->count();
     }
+
+    public function getUserByUsername($username)
+    {
+        return User::whereUsername($username)->firstOrFail();
+    }
 }

@@ -23,6 +23,9 @@ Vue.component('test-cover', require('./components/Test/Cover.vue'));
 Vue.component('test-publish', require('./components/Test/Publish.vue'));
 Vue.component('test-passing', require('./components/Test/Passing.vue'));
 Vue.component('test-show-answers', require('./components/Test/ShowAnswers.vue'));
+Vue.component('test-timer', require('./components/Test/Timer.vue'));
+
+Vue.prototype.$eventBus = new Vue();
 
 const app = new Vue({
     el: '#app',
@@ -30,3 +33,7 @@ const app = new Vue({
         counter: 0
     }
 });
+
+
+
+

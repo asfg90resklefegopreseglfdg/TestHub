@@ -14124,7 +14124,7 @@ function withParams(paramsOrClosure, maybeValidator) {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(15);
-module.exports = __webpack_require__(89);
+module.exports = __webpack_require__(92);
 
 
 /***/ }),
@@ -14154,6 +14154,9 @@ Vue.component('test-cover', __webpack_require__(77));
 Vue.component('test-publish', __webpack_require__(80));
 Vue.component('test-passing', __webpack_require__(83));
 Vue.component('test-show-answers', __webpack_require__(86));
+Vue.component('test-timer', __webpack_require__(89));
+
+Vue.prototype.$eventBus = new Vue();
 
 var app = new Vue({
   el: '#app',
@@ -51677,7 +51680,7 @@ var render = function() {
                 return _c(
                   "li",
                   {
-                    staticClass: "list-group-item",
+                    staticClass: "list-group-item my-2",
                     attrs: { question: (question.id = key) }
                   },
                   [
@@ -51685,7 +51688,7 @@ var render = function() {
                       _c(
                         "button",
                         {
-                          staticClass: "btn-sm",
+                          staticClass: "close",
                           attrs: { type: "button" },
                           on: {
                             click: function($event) {
@@ -51695,7 +51698,7 @@ var render = function() {
                         },
                         [
                           _vm._v(
-                            "\n                            X\n                        "
+                            "\n                            ×\n                        "
                           )
                         ]
                       )
@@ -52000,7 +52003,7 @@ var render = function() {
                           _c(
                             "button",
                             {
-                              staticClass: "btn btn-secondary",
+                              staticClass: "btn btn-secondary my-2",
                               attrs: { type: "button" },
                               on: {
                                 click: function($event) {
@@ -52376,6 +52379,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -52383,18 +52387,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             search: '',
-            sortNamesUri: 'api/getTestNames?page=1&descName=true',
-            sortIdUri: 'api/getTestNames?page=1&descId=true',
-            uri: 'api/getTestNames?page=1',
+            sortNamesUri: 'api/get-tests-names?page=1&descName=true',
+            sortIdUri: 'api/get-tests-names?page=1&descId=true',
+            uri: 'api/get-tests-names?page=1',
             params: {}
 
         };
     },
 
     methods: {
+        redirectOnTest: function redirectOnTest(test) {
+            window.location.href = '/test/' + test.slug;
+        },
+
         searchData: function searchData() {
             if (!this.search) {
-                return this.uri = 'api/getTestNames?page=1';
+                return this.uri = 'api/get-tests-names?page=1';
             }
             this.uri = 'api/search?search=' + this.search;
         },
@@ -52403,7 +52411,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (this.search) {
                 this.uri = this.uri === 'api/search?search=' + this.search + '&sort=name&order=desc' ? 'api/search?search=' + this.search + '&sort=name&order=asc' : 'api/search?search=' + this.search + '&sort=name&order=desc';
             } else {
-                this.uri = this.uri === 'api/getTestNames?sort=name&order=desc&page=1' ? 'api/getTestNames?sort=name&order=asc&page=1' : 'api/getTestNames?sort=name&order=desc&page=1';
+                this.uri = this.uri === 'api/get-tests-names?sort=name&order=desc&page=1' ? 'api/get-tests-names?sort=name&order=asc&page=1' : 'api/get-tests-names?sort=name&order=desc&page=1';
             }
         },
 
@@ -52411,8 +52419,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (this.search) {
                 this.uri = this.uri === 'api/search?search=' + this.search + '&sort=id&order=desc' ? 'api/search?search=' + this.search + '&sort=id&order=asc' : 'api/search?search=' + this.search + '&sort=id&order=desc';
             } else {
-                console.log(1);
-                this.uri = this.uri === 'api/getTestNames?sort=id&order=desc&page=1' ? 'api/getTestNames?sort=id&order=asc&page=1' : 'api/getTestNames?sort=id&order=desc&page=1';
+                this.uri = this.uri === 'api/get-tests-names?sort=id&order=desc&page=1' ? 'api/get-tests-names?sort=id&order=asc&page=1' : 'api/get-tests-names?sort=id&order=desc&page=1';
             }
         }
     },
@@ -52423,9 +52430,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             axios.get(this.uri).then(function (response) {
                 return _this.params = response.data;
-            }).catch(function (error) {
-                console.log(error);
-            });
+            }).catch(function (error) {});
         }
     },
 
@@ -52494,7 +52499,7 @@ var render = function() {
             _c(
               "button",
               {
-                staticClass: "page-link ",
+                staticClass: "page-link",
                 on: {
                   click: function($event) {
                     _vm.uri = _vm.params.prev_page_url
@@ -52538,14 +52543,14 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _c("table", { staticClass: "table" }, [
-      _c("thead", [
+    _c("table", { staticClass: "table table-hover" }, [
+      _c("thead", { staticClass: "thead-light" }, [
         _c("tr", [
           _c("th", { attrs: { scope: "col" } }, [
             _c(
               "a",
               {
-                attrs: { href: "sortIdUri" },
+                attrs: { href: "" },
                 on: {
                   click: function($event) {
                     $event.preventDefault()
@@ -52561,7 +52566,7 @@ var render = function() {
             _c(
               "a",
               {
-                attrs: { href: "sortNamesUri" },
+                attrs: { href: "" },
                 on: {
                   click: function($event) {
                     $event.preventDefault()
@@ -52583,39 +52588,56 @@ var render = function() {
       _vm._v(" "),
       _c(
         "tbody",
-        _vm._l(_vm.params.data, function(data, key) {
-          return _c("tr", [
-            _c("td", [_vm._v(_vm._s(data.id))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(data.name))]),
-            _vm._v(" "),
-            _c(
-              "td",
-              _vm._l(data.tags, function(tag) {
-                return _c("span", [_vm._v(_vm._s(tag.tag) + " ")])
-              })
-            ),
-            _vm._v(" "),
-            _c("td", [
-              _vm._v(
-                "\n                " +
-                  _vm._s(
-                    data.statistics_count
-                      ? "Тест прошло " + data.statistics_count + " человек"
-                      : "Тест еще никто не проходил"
-                  ) +
-                  "\n            "
-              )
-            ]),
-            _vm._v(" "),
-            _c("td", [
-              _c("a", { attrs: { href: "/test/" + data.slug } }, [
-                _c("button", { staticClass: "btn btn-primary" }, [
-                  _vm._v("Пройти тест")
-                ])
+        _vm._l(_vm.params.data, function(test, key) {
+          return _c(
+            "tr",
+            {
+              on: {
+                click: function($event) {
+                  _vm.redirectOnTest(test)
+                }
+              }
+            },
+            [
+              _c("td", [_vm._v(_vm._s(test.id))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(test.name))]),
+              _vm._v(" "),
+              _c(
+                "td",
+                _vm._l(test.tags, function(tag) {
+                  return _c("span", [_vm._v(_vm._s(tag.tag) + " ")])
+                })
+              ),
+              _vm._v(" "),
+              _c("td", [
+                _vm._v(
+                  "\n                " +
+                    _vm._s(
+                      test.statistics_count
+                        ? "Тест прошло " + test.statistics_count + " человек"
+                        : "Тест еще никто не проходил"
+                    ) +
+                    "\n            "
+                )
+              ]),
+              _vm._v(" "),
+              _c("td", [
+                _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-primary",
+                    attrs: { href: "/test/" + test.slug }
+                  },
+                  [
+                    _vm._v(
+                      "\n                    Пройти тест\n                "
+                    )
+                  ]
+                )
               ])
-            ])
-          ])
+            ]
+          )
         })
       )
     ])
@@ -52716,7 +52738,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
@@ -52739,7 +52760,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }).then(function (response) {
                 if (response.status === 200) {
                     var identifier = void 0;
-                    console.log(response.data);
                     if (response.data['identifier']) {
                         identifier = response.data['identifier'];
                     } else {
@@ -53213,31 +53233,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
@@ -53253,10 +53248,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             type: Number,
             required: true
         },
-        duration: {
-            type: Number,
-            required: true
-        },
         questions: {
             type: Array,
             required: true
@@ -53269,16 +53260,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
-            timerDisplay: '',
-            timerLength: 1,
             questionId: 0,
-            date: new Date(),
             userAnswers: [],
-            urlToRedirectIfIdentifierError: '/test/' + this.slug
+            urlToRedirect: '/test/' + this.slug
         };
     },
 
     methods: {
+
+        redirect: function redirect() {
+            window.location.href = this.urlToRedirect;
+        },
+
         endTest: function endTest() {
             axios.post('/test/' + this.slug + '/questions', {
                 userAnswers: this.userAnswers,
@@ -53300,33 +53293,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             localStorage.removeItem('durationTo' + this.testId);
             localStorage.removeItem('answers' + this.testId);
             localStorage.removeItem('identifier' + this.test.id);
-        },
-
-        setTimerLengthFromLocalStorage: function setTimerLengthFromLocalStorage() {
-            var testEndTime = void 0;
-            testEndTime = new Date(localStorage.getItem('durationTo' + this.testId));
-            this.timerLength = Math.floor((testEndTime - this.date) / 1000);
-        },
-
-        setTimerLengthFromDuration: function setTimerLengthFromDuration() {
-            this.timerLength = this.duration * 60;
-        },
-
-        timer: function timer() {
-            this.timerLength--;
-        },
-
-        setTimer: function setTimer() {
-            var durationTo = void 0;
-            durationTo = localStorage.getItem('durationTo' + this.testId) ? new Date(localStorage.getItem('durationTo' + this.testId)) : 0;
-            if (durationTo > this.date) {
-                this.setTimerLengthFromLocalStorage();
-            } else {
-                this.date.setMinutes(this.date.getMinutes() + this.duration);
-                localStorage.setItem('durationTo' + this.testId, this.date);
-                this.setTimerLengthFromDuration();
-            }
-            setInterval(this.timer, 1000);
         },
 
         setTemplateAnswers: function setTemplateAnswers() {
@@ -53362,16 +53328,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         exists = response.data['exists'];
                         if (!exists) {
                             this.clearLocalStorage();
-                            window.location.href = this.urlToRedirectIfIdentifierError;
+                            this.redirect();
                         }
                     }
                 }.bind(this)).catch(function (error) {
                     console.log(error);
                 });
             } else {
-                window.location.href = this.urlToRedirectIfIdentifierError;
+                this.redirect();
             }
         }
+    },
+
+    created: function created() {
+        this.$eventBus.$on('end-test', function () {
+            this.endTest();
+        }.bind(this));
+        this.$eventBus.$on('uncorrect-time', function () {
+            this.clearLocalStorage();
+            this.redirect();
+        }.bind(this));
     },
 
     watch: {
@@ -53380,28 +53356,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
 
-    computed: {
-        setTime: function setTime() {
-            if (this.timerLength === 0) {
-                this.endTest();
-            }
-            var minutes = Math.floor(this.timerLength / 60);
-            var seconds = this.timerLength % 60;
-            if (seconds < 10) {
-                seconds = "0" + seconds;
-            }
-            if (minutes < 10) {
-                minutes = "0" + minutes;
-            }
-            return this.timerDisplay = minutes + ":" + seconds;
-        }
-    },
-
     mounted: function mounted() {
         this.checkIfStatisticsCreated();
-        if (+!this.duration === 0) {
-            this.setTimer();
-        }
         if (JSON.parse(localStorage.getItem('answers' + this.testId))) {
             this.userAnswers = JSON.parse(localStorage.getItem('answers' + this.testId));
         } else {
@@ -53418,392 +53374,290 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "row justify-content-center" }, [
-      _c("div", { staticClass: "col-md-8" }, [
-        _c("div", { staticClass: "center-block" }, [
-          _c("div", { staticClass: "card card-default" }, [
-            _c(
-              "div",
-              [
-                _c("div", { staticClass: "card-header" }, [
-                  _c("div", { attrs: { align: "center" } }, [
-                    _c("h3", [_vm._v("Тест: " + _vm._s(_vm.testName))])
-                  ])
-                ]),
-                _vm._v(" "),
-                _vm._l(_vm.questions, function(question, questionKey) {
-                  return questionKey === _vm.questionId
-                    ? _c("div", [
-                        _c(
-                          "div",
-                          { staticClass: "form-control" },
-                          [
-                            _c("div", { attrs: { align: "center" } }, [
-                              _c("h5", [
-                                _vm._v(
-                                  "Вопрос номер " + _vm._s(questionKey + 1)
-                                )
-                              ])
-                            ]),
-                            _vm._v(
-                              "\n                                " +
-                                _vm._s(question.question) +
-                                "\n                                "
-                            ),
-                            question.type_answer === "oneAnswer"
-                              ? _vm._l(question.answers, function(
-                                  answer,
-                                  answerKey
-                                ) {
-                                  return _c("div", [
-                                    _vm._v(
-                                      "\n                                        " +
-                                        _vm._s(answerKey + 1) +
-                                        ".\n                                        "
-                                    ),
-                                    _c(
-                                      "label",
-                                      { staticClass: "form-check-label" },
-                                      [
-                                        _c("input", {
-                                          directives: [
-                                            {
-                                              name: "model",
-                                              rawName: "v-model",
-                                              value:
-                                                _vm.userAnswers[_vm.questionId]
-                                                  .answer,
-                                              expression:
-                                                "userAnswers[questionId].answer"
-                                            }
-                                          ],
-                                          attrs: { type: "radio" },
-                                          domProps: {
-                                            value: answer.answer,
-                                            checked: _vm._q(
-                                              _vm.userAnswers[_vm.questionId]
-                                                .answer,
-                                              answer.answer
-                                            )
-                                          },
-                                          on: {
-                                            change: function($event) {
-                                              _vm.$set(
-                                                _vm.userAnswers[_vm.questionId],
-                                                "answer",
-                                                answer.answer
-                                              )
-                                            }
-                                          }
-                                        }),
-                                        _vm._v(
-                                          "\n                                            " +
-                                            _vm._s(answer.answer) +
-                                            "\n                                        "
-                                        )
-                                      ]
-                                    )
-                                  ])
-                                })
-                              : question.type_answer === "someAnswers"
-                                ? _vm._l(question.answers, function(
-                                    answer,
-                                    answerKey
-                                  ) {
-                                    return _c("div", [
-                                      _vm._v(
-                                        "\n                                        " +
-                                          _vm._s(answerKey + 1) +
-                                          ".\n                                        "
-                                      ),
-                                      _c(
-                                        "label",
-                                        { staticClass: "form-check-label" },
-                                        [
-                                          _c("input", {
-                                            directives: [
-                                              {
-                                                name: "model",
-                                                rawName: "v-model",
-                                                value:
-                                                  _vm.userAnswers[
-                                                    _vm.questionId
-                                                  ].answers[answerKey],
-                                                expression:
-                                                  "userAnswers[questionId].answers[answerKey]"
-                                              }
-                                            ],
-                                            attrs: {
-                                              type: "checkbox",
-                                              name: answerKey,
-                                              "true-value": answer.answer
-                                            },
-                                            domProps: {
-                                              checked: Array.isArray(
-                                                _vm.userAnswers[_vm.questionId]
-                                                  .answers[answerKey]
-                                              )
-                                                ? _vm._i(
-                                                    _vm.userAnswers[
-                                                      _vm.questionId
-                                                    ].answers[answerKey],
-                                                    null
-                                                  ) > -1
-                                                : _vm._q(
-                                                    _vm.userAnswers[
-                                                      _vm.questionId
-                                                    ].answers[answerKey],
-                                                    answer.answer
-                                                  )
-                                            },
-                                            on: {
-                                              change: function($event) {
-                                                var $$a =
-                                                    _vm.userAnswers[
-                                                      _vm.questionId
-                                                    ].answers[answerKey],
-                                                  $$el = $event.target,
-                                                  $$c = $$el.checked
-                                                    ? answer.answer
-                                                    : false
-                                                if (Array.isArray($$a)) {
-                                                  var $$v = null,
-                                                    $$i = _vm._i($$a, $$v)
-                                                  if ($$el.checked) {
-                                                    $$i < 0 &&
-                                                      _vm.$set(
-                                                        _vm.userAnswers[
-                                                          _vm.questionId
-                                                        ].answers,
-                                                        answerKey,
-                                                        $$a.concat([$$v])
-                                                      )
-                                                  } else {
-                                                    $$i > -1 &&
-                                                      _vm.$set(
-                                                        _vm.userAnswers[
-                                                          _vm.questionId
-                                                        ].answers,
-                                                        answerKey,
-                                                        $$a
-                                                          .slice(0, $$i)
-                                                          .concat(
-                                                            $$a.slice($$i + 1)
-                                                          )
-                                                      )
-                                                  }
-                                                } else {
-                                                  _vm.$set(
-                                                    _vm.userAnswers[
-                                                      _vm.questionId
-                                                    ].answers,
-                                                    answerKey,
-                                                    $$c
-                                                  )
-                                                }
-                                              }
-                                            }
-                                          }),
-                                          _vm._v(
-                                            "\n                                            " +
-                                              _vm._s(answer.answer) +
-                                              "\n                                        "
-                                          )
-                                        ]
-                                      )
-                                    ])
-                                  })
-                                : question.type_answer === "number"
-                                  ? [
-                                      _c("br"),
-                                      _vm._v(" "),
-                                      _c("div", [
-                                        _c("input", {
-                                          directives: [
-                                            {
-                                              name: "model",
-                                              rawName: "v-model",
-                                              value:
-                                                _vm.userAnswers[questionKey]
-                                                  .answer,
-                                              expression:
-                                                "userAnswers[questionKey].answer"
-                                            }
-                                          ],
-                                          staticClass: "form-control col-3",
-                                          attrs: {
-                                            type: "number",
-                                            placeholder: "Числовой ответ"
-                                          },
-                                          domProps: {
-                                            value:
-                                              _vm.userAnswers[questionKey]
-                                                .answer
-                                          },
-                                          on: {
-                                            input: function($event) {
-                                              if ($event.target.composing) {
-                                                return
-                                              }
-                                              _vm.$set(
-                                                _vm.userAnswers[questionKey],
-                                                "answer",
-                                                $event.target.value
-                                              )
-                                            }
-                                          }
-                                        })
-                                      ])
-                                    ]
-                                  : question.type_answer === "text"
-                                    ? [
-                                        _c("br"),
-                                        _vm._v(" "),
-                                        _c("div", [
-                                          _c("input", {
-                                            directives: [
-                                              {
-                                                name: "model",
-                                                rawName: "v-model",
-                                                value:
-                                                  _vm.userAnswers[questionKey]
-                                                    .answer,
-                                                expression:
-                                                  "userAnswers[questionKey].answer"
-                                              }
-                                            ],
-                                            staticClass: "form-control col-3",
-                                            attrs: {
-                                              placeholder: "Текстовый ответ"
-                                            },
-                                            domProps: {
-                                              value:
-                                                _vm.userAnswers[questionKey]
-                                                  .answer
-                                            },
-                                            on: {
-                                              input: function($event) {
-                                                if ($event.target.composing) {
-                                                  return
-                                                }
-                                                _vm.$set(
-                                                  _vm.userAnswers[questionKey],
-                                                  "answer",
-                                                  $event.target.value
-                                                )
-                                              }
-                                            }
-                                          })
-                                        ])
-                                      ]
-                                    : _vm._e()
-                          ],
-                          2
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-primary",
-                            class: { disabled: _vm.questionId === 0 },
-                            on: {
-                              click: function($event) {
-                                _vm.questionId == 0 ? 0 : _vm.questionId--
-                              }
-                            }
-                          },
-                          [
-                            _vm._v(
-                              "Предыдущий вопрос\n                            "
-                            )
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-primary",
-                            class: {
-                              disabled:
-                                _vm.questionId ===
-                                Object.keys(_vm.questions).length - 1
-                            },
-                            on: {
-                              click: function($event) {
-                                _vm.questionId ==
-                                Object.keys(_vm.questions).length - 1
-                                  ? Object.keys(_vm.questions).length - 1
-                                  : _vm.questionId++
-                              }
-                            }
-                          },
-                          [
-                            _vm._v(
-                              "Следующий вопрос\n                            "
-                            )
-                          ]
-                        )
-                      ])
-                    : _vm._e()
-                })
-              ],
-              2
-            )
-          ])
+  return _c(
+    "div",
+    { staticClass: "card card-default" },
+    [
+      _c("div", { staticClass: "card-header" }, [
+        _c("div", { attrs: { align: "center" } }, [
+          _c("h3", [_vm._v("Тест: " + _vm._s(_vm.testName))])
         ])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "col-md-3" }, [
-        _vm.duration !== 0
-          ? _c(
-              "div",
-              { staticClass: "card card-default", attrs: { align: "center" } },
-              [_c("h3", [_vm._v("Осталось времени " + _vm._s(_vm.setTime))])]
-            )
-          : _vm._e(),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "card card-default", attrs: { align: "center" } },
-          [
-            _c(
-              "button",
-              { staticClass: "btn btn-success", on: { click: _vm.endTest } },
-              [_vm._v("Закончить тест\n                ")]
-            )
-          ]
-        ),
-        _vm._v(" "),
-        _vm._m(0)
-      ])
-    ])
-  ])
+      _vm._l(_vm.questions, function(question, questionKey) {
+        return questionKey === _vm.questionId
+          ? _c("div", [
+              _c(
+                "div",
+                { staticClass: "form-control" },
+                [
+                  _c("div", { attrs: { align: "center" } }, [
+                    _c("h5", [
+                      _vm._v("Вопрос номер " + _vm._s(questionKey + 1))
+                    ])
+                  ]),
+                  _vm._v(
+                    "\n            " +
+                      _vm._s(question.question) +
+                      "\n            "
+                  ),
+                  question.type_answer === "oneAnswer"
+                    ? _vm._l(question.answers, function(answer, answerKey) {
+                        return _c("div", [
+                          _vm._v(
+                            "\n                    " +
+                              _vm._s(answerKey + 1) +
+                              ".\n                    "
+                          ),
+                          _c("label", { staticClass: "form-check-label" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.userAnswers[_vm.questionId].answer,
+                                  expression: "userAnswers[questionId].answer"
+                                }
+                              ],
+                              attrs: { type: "radio" },
+                              domProps: {
+                                value: answer.answer,
+                                checked: _vm._q(
+                                  _vm.userAnswers[_vm.questionId].answer,
+                                  answer.answer
+                                )
+                              },
+                              on: {
+                                change: function($event) {
+                                  _vm.$set(
+                                    _vm.userAnswers[_vm.questionId],
+                                    "answer",
+                                    answer.answer
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(answer.answer) +
+                                "\n                    "
+                            )
+                          ])
+                        ])
+                      })
+                    : question.type_answer === "someAnswers"
+                      ? _vm._l(question.answers, function(answer, answerKey) {
+                          return _c("div", [
+                            _vm._v(
+                              "\n                    " +
+                                _vm._s(answerKey + 1) +
+                                ".\n                    "
+                            ),
+                            _c("label", { staticClass: "form-check-label" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value:
+                                      _vm.userAnswers[_vm.questionId].answers[
+                                        answerKey
+                                      ],
+                                    expression:
+                                      "userAnswers[questionId].answers[answerKey]"
+                                  }
+                                ],
+                                attrs: {
+                                  type: "checkbox",
+                                  name: answerKey,
+                                  "true-value": answer.answer
+                                },
+                                domProps: {
+                                  checked: Array.isArray(
+                                    _vm.userAnswers[_vm.questionId].answers[
+                                      answerKey
+                                    ]
+                                  )
+                                    ? _vm._i(
+                                        _vm.userAnswers[_vm.questionId].answers[
+                                          answerKey
+                                        ],
+                                        null
+                                      ) > -1
+                                    : _vm._q(
+                                        _vm.userAnswers[_vm.questionId].answers[
+                                          answerKey
+                                        ],
+                                        answer.answer
+                                      )
+                                },
+                                on: {
+                                  change: function($event) {
+                                    var $$a =
+                                        _vm.userAnswers[_vm.questionId].answers[
+                                          answerKey
+                                        ],
+                                      $$el = $event.target,
+                                      $$c = $$el.checked ? answer.answer : false
+                                    if (Array.isArray($$a)) {
+                                      var $$v = null,
+                                        $$i = _vm._i($$a, $$v)
+                                      if ($$el.checked) {
+                                        $$i < 0 &&
+                                          _vm.$set(
+                                            _vm.userAnswers[_vm.questionId]
+                                              .answers,
+                                            answerKey,
+                                            $$a.concat([$$v])
+                                          )
+                                      } else {
+                                        $$i > -1 &&
+                                          _vm.$set(
+                                            _vm.userAnswers[_vm.questionId]
+                                              .answers,
+                                            answerKey,
+                                            $$a
+                                              .slice(0, $$i)
+                                              .concat($$a.slice($$i + 1))
+                                          )
+                                      }
+                                    } else {
+                                      _vm.$set(
+                                        _vm.userAnswers[_vm.questionId].answers,
+                                        answerKey,
+                                        $$c
+                                      )
+                                    }
+                                  }
+                                }
+                              }),
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(answer.answer) +
+                                  "\n                    "
+                              )
+                            ])
+                          ])
+                        })
+                      : question.type_answer === "number"
+                        ? [
+                            _c("br"),
+                            _vm._v(" "),
+                            _c("div", [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.userAnswers[questionKey].answer,
+                                    expression:
+                                      "userAnswers[questionKey].answer"
+                                  }
+                                ],
+                                staticClass: "form-control col-3",
+                                attrs: {
+                                  type: "number",
+                                  placeholder: "Числовой ответ"
+                                },
+                                domProps: {
+                                  value: _vm.userAnswers[questionKey].answer
+                                },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.userAnswers[questionKey],
+                                      "answer",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              })
+                            ])
+                          ]
+                        : question.type_answer === "text"
+                          ? [
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("div", [
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value:
+                                        _vm.userAnswers[questionKey].answer,
+                                      expression:
+                                        "userAnswers[questionKey].answer"
+                                    }
+                                  ],
+                                  staticClass: "form-control col-3",
+                                  attrs: { placeholder: "Текстовый ответ" },
+                                  domProps: {
+                                    value: _vm.userAnswers[questionKey].answer
+                                  },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.userAnswers[questionKey],
+                                        "answer",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ])
+                            ]
+                          : _vm._e()
+                ],
+                2
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  class: { disabled: _vm.questionId === 0 },
+                  on: {
+                    click: function($event) {
+                      _vm.questionId == 0 ? 0 : _vm.questionId--
+                    }
+                  }
+                },
+                [_vm._v("Предыдущий вопрос\n        ")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  class: {
+                    disabled:
+                      _vm.questionId === Object.keys(_vm.questions).length - 1
+                  },
+                  on: {
+                    click: function($event) {
+                      _vm.questionId == Object.keys(_vm.questions).length - 1
+                        ? Object.keys(_vm.questions).length - 1
+                        : _vm.questionId++
+                    }
+                  }
+                },
+                [_vm._v("Следующий вопрос\n        ")]
+              )
+            ])
+          : _vm._e()
+      })
+    ],
+    2
+  )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "card card-default", attrs: { align: "center" } },
-      [
-        _c("p", [
-          _vm._v(
-            "Вы можете походить тесты без регистрации, но если вы зарегистрируетесь, то все ваши\n                    созднные тесты и результаты пройденных тестов сохранятся."
-          )
-        ]),
-        _vm._v(" "),
-        _c("p", [
-          _c("a", { attrs: { href: "/register" } }, [
-            _vm._v("Зарегистрироваться")
-          ])
-        ])
-      ]
-    )
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -53908,20 +53762,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
@@ -53950,166 +53790,111 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "row justify-content-center" }, [
-      _c("div", { staticClass: "col-md-8" }, [
-        _c("div", { staticClass: "center-block" }, [
-          _c("div", { staticClass: "card card-default" }, [
-            _c(
-              "div",
-              [
-                _c("div", { staticClass: "card-header" }, [
-                  _c("div", { attrs: { align: "center" } }, [
-                    _c("h3", [
-                      _vm._v("Ответы на тест: " + _vm._s(_vm.testName))
-                    ])
-                  ])
-                ]),
-                _vm._v(" "),
-                _vm._l(_vm.questions, function(question, questionKey) {
-                  return questionKey === _vm.questionId
-                    ? _c("div", [
+  return _c("div", { staticClass: "card card-default" }, [
+    _c(
+      "div",
+      [
+        _c("div", { staticClass: "card-header" }, [
+          _c("div", { attrs: { align: "center" } }, [
+            _c("h3", [_vm._v("Ответы на тест: " + _vm._s(_vm.testName))])
+          ])
+        ]),
+        _vm._v(" "),
+        _vm._l(_vm.questions, function(question, questionKey) {
+          return questionKey === _vm.questionId
+            ? _c("div", [
+                _c(
+                  "div",
+                  { staticClass: "form-control" },
+                  [
+                    _c("div", { attrs: { align: "center" } }, [
+                      _c("h5", [
+                        _vm._v("Вопрос номер " + _vm._s(questionKey + 1))
+                      ])
+                    ]),
+                    _vm._v(
+                      "\n                " +
+                        _vm._s(question.question) +
+                        "\n                "
+                    ),
+                    _vm._l(question.answers, function(answer, answerKey) {
+                      return _c("div", [
+                        _vm._v(
+                          "\n                    " +
+                            _vm._s(answerKey + 1) +
+                            ".\n                    "
+                        ),
                         _c(
-                          "div",
-                          { staticClass: "form-control" },
+                          "label",
+                          { staticClass: "form-check-label" },
                           [
-                            _c("div", { attrs: { align: "center" } }, [
-                              _c("h5", [
-                                _vm._v(
-                                  "Вопрос номер " + _vm._s(questionKey + 1)
-                                )
-                              ])
-                            ]),
-                            _vm._v(
-                              "\n                                " +
-                                _vm._s(question.question) +
-                                "\n                                "
-                            ),
-                            _vm._l(question.answers, function(
-                              answer,
-                              answerKey
-                            ) {
-                              return _c("div", [
-                                _vm._v(
-                                  "\n                                    " +
-                                    _vm._s(answerKey + 1) +
-                                    ".\n                                    "
-                                ),
-                                _c(
-                                  "label",
-                                  { staticClass: "form-check-label" },
-                                  [
-                                    answer.correct
-                                      ? [
-                                          _c("h4", [
-                                            _c(
-                                              "span",
-                                              {
-                                                staticClass:
-                                                  "badge badge-success"
-                                              },
-                                              [_vm._v(_vm._s(answer.answer))]
-                                            )
-                                          ])
-                                        ]
-                                      : [
-                                          _vm._v(
-                                            "\n                                            " +
-                                              _vm._s(answer.answer) +
-                                              "\n                                        "
-                                          )
-                                        ]
-                                  ],
-                                  2
-                                )
-                              ])
-                            })
+                            answer.correct
+                              ? [
+                                  _c("h4", [
+                                    _c(
+                                      "span",
+                                      { staticClass: "badge badge-success" },
+                                      [_vm._v(_vm._s(answer.answer))]
+                                    )
+                                  ])
+                                ]
+                              : [
+                                  _vm._v(
+                                    "\n                            " +
+                                      _vm._s(answer.answer) +
+                                      "\n                        "
+                                  )
+                                ]
                           ],
                           2
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-primary",
-                            class: { disabled: _vm.questionId === 0 },
-                            on: {
-                              click: function($event) {
-                                _vm.questionId == 0 ? 0 : _vm.questionId--
-                              }
-                            }
-                          },
-                          [
-                            _vm._v(
-                              "Предыдущий вопрос\n                            "
-                            )
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-primary",
-                            class: {
-                              disabled:
-                                _vm.questionId ===
-                                Object.keys(_vm.questions).length - 1
-                            },
-                            on: {
-                              click: function($event) {
-                                _vm.questionId ==
-                                Object.keys(_vm.questions).length - 1
-                                  ? Object.keys(_vm.questions).length - 1
-                                  : _vm.questionId++
-                              }
-                            }
-                          },
-                          [
-                            _vm._v(
-                              "Следующий вопрос\n                            "
-                            )
-                          ]
                         )
                       ])
-                    : _vm._e()
-                })
-              ],
-              2
-            )
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _vm._m(0)
-    ])
+                    })
+                  ],
+                  2
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    class: { disabled: _vm.questionId === 0 },
+                    on: {
+                      click: function($event) {
+                        _vm.questionId == 0 ? 0 : _vm.questionId--
+                      }
+                    }
+                  },
+                  [_vm._v("Предыдущий вопрос\n            ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    class: {
+                      disabled:
+                        _vm.questionId === Object.keys(_vm.questions).length - 1
+                    },
+                    on: {
+                      click: function($event) {
+                        _vm.questionId == Object.keys(_vm.questions).length - 1
+                          ? Object.keys(_vm.questions).length - 1
+                          : _vm.questionId++
+                      }
+                    }
+                  },
+                  [_vm._v("Следующий вопрос\n            ")]
+                )
+              ])
+            : _vm._e()
+        })
+      ],
+      2
+    )
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-3" }, [
-      _c(
-        "div",
-        { staticClass: "card card-default", attrs: { align: "center" } },
-        [
-          _c("p", [
-            _vm._v(
-              "Вы можете походить тесты без регистрации, но если вы зарегистрируетесь, то все ваши\n                    созднные тесты и результаты пройденных тестов сохранятся."
-            )
-          ]),
-          _vm._v(" "),
-          _c("p", [
-            _c("a", { attrs: { href: "/register" } }, [
-              _vm._v("Зарегистрироваться")
-            ])
-          ])
-        ]
-      )
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -54121,6 +53906,190 @@ if (false) {
 
 /***/ }),
 /* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(90)
+/* template */
+var __vue_template__ = __webpack_require__(91)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources\\assets\\js\\components\\Test\\Timer.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-4fbd8492", Component.options)
+  } else {
+    hotAPI.reload("data-v-4fbd8492", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 90 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: {
+        testId: {
+            type: Number,
+            required: true
+        },
+        duration: {
+            type: Number,
+            required: true
+        }
+    },
+
+    data: function data() {
+        return {
+            timerDisplay: '',
+            timerLength: 1,
+            date: new Date()
+        };
+    },
+
+    methods: {
+        endTest: function endTest() {
+            this.$eventBus.$emit('end-test');
+        },
+
+        setTimerLengthFromLocalStorage: function setTimerLengthFromLocalStorage() {
+            var testEndTime = void 0;
+            testEndTime = new Date(localStorage.getItem('durationTo' + this.testId));
+            this.timerLength = Math.floor((testEndTime - this.date) / 1000);
+        },
+
+        setTimerLengthFromDuration: function setTimerLengthFromDuration() {
+            this.timerLength = this.duration * 60;
+        },
+
+        timer: function timer() {
+            this.timerLength--;
+        },
+
+        setTimer: function setTimer() {
+            var durationTo = void 0;
+            durationTo = localStorage.getItem('durationTo' + this.testId) ? new Date(localStorage.getItem('durationTo' + this.testId)) : 0;
+
+            if (durationTo > this.date) {
+                this.setTimerLengthFromLocalStorage();
+            } else if (durationTo === 0) {
+                this.date.setMinutes(this.date.getMinutes() + this.duration);
+                localStorage.setItem('durationTo' + this.testId, this.date);
+                this.setTimerLengthFromDuration();
+            } else if (durationTo < this.date) {
+                this.$eventBus.$emit('uncorrect-time');
+            }
+            setInterval(this.timer, 1000);
+        }
+    },
+
+    computed: {
+        setTestTimer: function setTestTimer() {
+            if (this.timerLength === 0) {
+                this.endTest();
+            }
+            var minutes = Math.floor(this.timerLength / 60);
+            var seconds = this.timerLength % 60;
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+            return this.timerDisplay = minutes + ":" + seconds;
+        }
+    },
+
+    mounted: function mounted() {
+        if (this.duration !== 0) {
+            this.setTimer();
+        }
+    }
+});
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "border-top" }, [
+    _vm.duration !== 0
+      ? _c("div", [
+          _c("h3", [_vm._v("Осталось времени " + _vm._s(_vm.setTestTimer))])
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    _c(
+      "button",
+      {
+        staticClass: "btn container-fluid btn-success",
+        on: { click: _vm.endTest }
+      },
+      [_vm._v("\n        Закончить тест\n    ")]
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-4fbd8492", module.exports)
+  }
+}
+
+/***/ }),
+/* 92 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

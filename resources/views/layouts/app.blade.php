@@ -32,7 +32,6 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
-                        <li><a class="nav-link" href="{{ route('test.create') }}">Создать тест</a></li>
                         <!-- Authentication Links -->
                         @guest
                             <li><a class="nav-link" href="{{ route('login') }}">Логин</a></li>
@@ -62,7 +61,7 @@
         </nav>
 
         <main class="py-4">
-            @yield('content')
+            @yield('layoutContent')
         </main>
     </div>
 

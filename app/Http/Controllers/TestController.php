@@ -19,6 +19,12 @@ use Illuminate\Support\Facades\Gate;
 
 class TestController extends Controller
 {
+    protected $testRep;
+
+    public function __construct(TestRepository $testRepository)
+    {
+        $this->testRep = $testRepository;
+    }
 
     /**
      * Display a listing of the resource.
@@ -45,16 +51,10 @@ class TestController extends Controller
      *
      * @param StoreTest $request
      * @param User $user
-     * @param Tag $tag
-     * @param Question $question
-     * @param Answer $answer
      * @return Response
      */
     public function store(StoreTest $request,
-                          User $user,
-                          Tag $tag,
-                          Question $question,
-                          Answer $answer)
+                          User $user)
     {
         $user = $user->getUser();
         $testOptions = $request->input('testOptions');
@@ -69,12 +69,11 @@ class TestController extends Controller
      * Display test questions
      *
      * @param $slug
-     * @param TestRepository $testRepository
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showQuestions($slug, TestRepository $testRepository)
+    public function showQuestions($slug)
     {
-        $test = $testRepository->getTestForShowQuestions($slug);
+        $test = $this->testRep->getTestForShowQuestions($slug);
         return view('test.passing', ['test' => $test]);
     }
 
@@ -82,13 +81,12 @@ class TestController extends Controller
      * Display test cover
      *
      * @param $slug
-     * @param TestRepository $testRepository
      * @return Response
      * @internal param Test $test
      */
-    public function showCover($slug, TestRepository $testRepository)
+    public function showCover($slug)
     {
-        $test = $testRepository->getTestForCover($slug);
+        $test = $this->testRep->getTestForCover($slug);
         return view('test.cover', [
             'test' => $test,
         ]);
@@ -96,16 +94,14 @@ class TestController extends Controller
 
     /**
      * @param $slug
-     * @param TestRepository $testRepository
      * @param User $user
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function publish($slug,
-                            TestRepository $testRepository,
                             User $user)
     {
         $user = $user->getUser();
-        $test = $testRepository->getTestBySlug($slug);
+        $test = $this->testRep->getTestBySlug($slug);
         abort_if($user->cant('publish', $test), 404);
         return view('test.publish', [
             'user' => $user,
@@ -115,12 +111,11 @@ class TestController extends Controller
 
     /**
      * @param $slug
-     * @param TestRepository $testRepository
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showAnswers($slug, TestRepository $testRepository)
+    public function showAnswers($slug)
     {
-        $test = $testRepository->getTestForShowAnswers($slug);
+        $test = $this->testRep->getTestForShowAnswers($slug);
 
         return view('test.showAnswers', ['test' => $test]);
     }

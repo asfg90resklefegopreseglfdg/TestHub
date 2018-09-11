@@ -65,14 +65,14 @@
             <ol class="list-group">
                 <draggable v-model="testOptions.questions"
                            :options="draggableOptions">
-                    <li class="list-group-item"
+                    <li class="list-group-item my-2"
                         v-for="(question, key) in testOptions.questions"
                         :question.id="question.id = key">
                         <div class="d-flex flex-row-reverse">
-                            <button class="btn-sm"
+                            <button class="close"
                                     type="button"
                                     @click="testOptions.questions.splice(key, 1)">
-                                X
+                                &times;
                             </button>
                         </div>
                         Номер вопроса {{question.id + 1}}
@@ -143,7 +143,7 @@
                                 </button>
 
                             </div>
-                            <button class="btn btn-secondary"
+                            <button class="btn btn-secondary my-2"
                                     type="button"
                                     @click="addAnswer(question)">Добавить ответ
                             </button>
